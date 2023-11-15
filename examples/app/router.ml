@@ -5,8 +5,10 @@ open Controllers
 let router =
   scope "/"
     [
-      resource "photo" (module Photo_controller);
-      scope "user"
+      resource "/photos" (module Photo_controller);
+      resource "/albums" (module Album_controller);
+      resource "/likes" (module Like_controller);
+      scope "/user"
         [
           get "/" User_controller.index;
           post "/" User_controller.create;
