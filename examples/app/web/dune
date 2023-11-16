@@ -1,0 +1,3 @@
+(library
+ (name app_web)
+ (libraries mesa controllers components lib))

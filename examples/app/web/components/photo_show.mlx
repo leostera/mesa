@@ -1,0 +1,12 @@
+open Mesa.Html
+
+type args = { photos: string list }
+
+let photo name = <span> (string name) </span>
+
+let render args =
+  let photos = args.photos |> List.map photo |> list in
+  <div>
+    <span> (photos) </span>
+  </div>
+
