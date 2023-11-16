@@ -1,0 +1,9 @@
+(library
+ (name dialect)
+ (libraries ppxlib))
+
+(menhir
+ (modules parser))
+
+(ocamllex
+ (modules lexer))

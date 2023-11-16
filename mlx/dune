@@ -1,0 +1,10 @@
+(executable
+ (public_name mlx)
+ (name main)
+ (modules main)
+ (libraries mlx))
+
+(library
+ (name mlx)
+ (modules :standard \ main)
+ (libraries html dialect))

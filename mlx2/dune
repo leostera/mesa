@@ -1,0 +1,12 @@
+(executable
+ (public_name mlx2)
+ (name main)
+ (modules main)
+ (libraries mlx2))
+
+(library
+ (name mlx2)
+ (modules :standard \ main)
+ (preprocess
+  (pps ppx_bitstring))
+ (libraries bitstring ppxlib))
