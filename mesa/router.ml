@@ -31,6 +31,7 @@ let resource name (module R : Resource) =
   scope name
     [
       get "/" R.index;
+      get "/:id" R.get;
       get "/:id/edit" R.edit;
       get "/new" R.new_;
       post "/" R.create;
@@ -69,23 +70,29 @@ module Route_compiler = struct
         routes |> List.map (fun route -> compile route prefix) |> List.flatten
     | Route { meth; path; handler } ->
         let path = remove_trailing_slash path in
-        let path = path :: last in
+        let path = List.rev (path :: last) in
         [ (meth, compile_path path handler, String.concat "/" (List.rev path)) ]
 
   let compile t = compile t []
 
+  let is_capture p =
+    Logger.trace (fun f ->
+        f "is_capture %s == %b" p (String.starts_with ~prefix:":" p));
+    String.starts_with ~prefix:":" p
+
   let rec match_one route parts =
     match (route, parts) with
     | Last (pattern, handler), [ path ] ->
-        Logger.trace (fun f -> f "Last -> %s ~= %s" pattern path);
-        if String.equal pattern path then Some handler
+        let is_match = is_capture pattern || String.equal pattern path in
+        Logger.trace (fun f -> f "Last -> %S ~= %S -> %b" pattern path is_match);
+        if is_match then Some handler
         else (
           Logger.trace (fun f -> f "break");
           None)
     | Path (pattern, rest), path :: parts ->
-        Logger.trace (fun f ->
-            f "Path -> %s ~= %s -> %b" pattern path (String.equal pattern path));
-        if String.equal pattern path then match_one rest parts
+        let is_match = String.equal pattern path || is_capture pattern in
+        Logger.trace (fun f -> f "Path -> %S ~= %S -> %b" pattern path is_match);
+        if is_match then match_one rest parts
         else (
           Logger.trace (fun f -> f "break");
           None)
@@ -100,7 +107,8 @@ module Route_compiler = struct
     match routes with
     | [] -> Error `Not_found
     | (route, stringy_route) :: routes -> (
-        Logger.trace (fun f -> f "check route %s" stringy_route);
+        Logger.trace (fun f ->
+            f "check route %S ~= %S" stringy_route (String.concat "/" parts));
         match match_one route parts with
         | Some handler -> Ok handler
         | None -> run_routes routes parts)

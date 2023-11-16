@@ -14,6 +14,8 @@ depends: [
   "trail" {>= "0.0.1"}
   "atacama" {>= "0.0.1"}
   "riot" {>= "0.0.1"}
+  "bitstring" {>= "4.1.0"}
+  "ppx_bitstring" {>= "4.1.0"}
   "telemetry" {>= "0.0.1"}
   "odoc" {with-doc}
 ]

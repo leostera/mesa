@@ -1,0 +1,3 @@
+(library
+ (name mesa)
+ (libraries mlx nomad trail riot telemetry))
